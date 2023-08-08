@@ -1,7 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-// @ts-ignore
 import type { AppRouteConfig } from '@/shared/types/routeTypes';
-// @ts-ignore
 import middleware from './middleware'
 
 const routes: AppRouteConfig[] = [
@@ -23,11 +21,53 @@ const routes: AppRouteConfig[] = [
     },
     beforeEnter: middleware.guest,
   },
+  {
+    path: '/',
+    name: 'main',
+    component: () => import('../views/MainView.vue'),
+    meta: {
+      title: `${import.meta.env.VITE_APP_TITLE}`,
+    },
+    beforeEnter: middleware.user,
+    children: [
+      {
+        path: "/voucher",
+        name: "voucher",
+        component: () => import("../views/Voucher/Index.vue"),
+        meta: {
+          title: `Voucher | ${import.meta.env.VITE_APP_TITLE}`,
+        },
+      },
+      {
+        path: "/groups",
+        name: "groups",
+        component: () => import("../views/Groups/Index.vue"),
+        meta: {
+          title: `Group | ${import.meta.env.VITE_APP_TITLE}`,
+        },
+        roles: ['SuperAdmin', 'GroupAdmin']
+      },
+      {
+        path: "/Users",
+        name: "Users",
+        component: () => import("../views/Users/Index.vue"),
+        meta: {
+          title: `Users | ${import.meta.env.VITE_APP_TITLE}`,
+          roles: ['SuperAdmin']
+        },
+      },
+    ]
+  },
 ]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes
 })
+
+router.beforeEach((to, from, next) => {
+  document.title = `${to.meta.title}`;
+  next();
+});
 
 export default router
