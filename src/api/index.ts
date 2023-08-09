@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 let instance = axios.create({
-    baseURL: import.meta.env.VITE_URL,
+    baseURL: import.meta.env.VITE_URL as string,
 });
 
 instance.interceptors.request.use((request) => {
